@@ -1,1 +1,8 @@
+Directory - mongodb508_docker
+
+Docker Scripts for MongoDB 5.0.8 version.
+This includes the source and target docker-compose scripts, which are used within their start and stop shell scripts.
+Source and target docker-compose scripts provide the localhost:container port mappings.
+This is used to create source and target containers for MongoDB clusters, which can used for learning and testing purpose of data migration.
+The start scripts are used to configure MongoDB replica sets and sharding.
 
