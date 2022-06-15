@@ -1,0 +1,75 @@
+version: '3'
+services:
+ # mongo config server
+  mongosourcecfg1:
+    container_name: mongosourcecfg1
+    hostname: mongosourcecfg1
+    image: mongo:5.0.8
+    command: mongod --configsvr --replSet mongosourcers1conf --dbpath /data/db --port 27021 --bind_ip_all
+    ports:
+      - 27021:27021
+    volumes:
+      - ~/mongo_source_cluster/config1:/data/db
+
+  mongosourcecfg2:
+    container_name: mongosourcecfg2
+    hostname: mongosourcecfg2
+    image: mongo:5.0.8
+    command: mongod --configsvr --replSet mongosourcers1conf --dbpath /data/db --port 27021 --bind_ip_all
+    ports:
+      - 27022:27021
+    volumes:
+      - ~/mongo_source_cluster/config2:/data/db
+
+  mongosourcecfg3:
+    container_name: mongosourcecfg3
+    hostname: mongosourcecfg3
+    image: mongo:5.0.8
+    command: mongod --configsvr --replSet mongosourcers1conf --dbpath /data/db --port 27021 --bind_ip_all
+    ports:
+      - 27023:27021
+    volumes:
+      - ~/mongo_source_cluster/config3:/data/db
+
+# replica set shard 1
+  mongosourcers1n1:
+    container_name: mongosourcers1n1
+    hostname: mongosourcers1n1
+    image: mongo:5.0.8
+    command: mongod --shardsvr --replSet mongosourcers1 --dbpath /data/db --port 27024 --bind_ip_all
+    ports:
+      - 27024:27024
+    volumes:
+      - ~/mongo_source_cluster/data1:/data/db
+
+  mongosourcers1n2:
+    container_name: mongosourcers1n2
+    hostname: mongosourcers1n2
+    image: mongo:5.0.8
+    command: mongod --shardsvr --replSet mongosourcers1 --dbpath /data/db --port 27024 --bind_ip_all
+    ports:
+      - 27025:27024
+    volumes:
+      - ~/mongo_source_cluster/data2:/data/db
+
+  mongosourcers1n3:
+    container_name: mongosourcers1n3
+    hostname: mongosourcers1n3
+    image: mongo:5.0.8
+    command: mongod --shardsvr --replSet mongosourcers1 --dbpath /data/db --port 27024 --bind_ip_all
+    ports:
+      - 27026:27024
+    volumes:
+      - ~/mongo_source_cluster/data3:/data/db
+
+# mongos router
+  mongossource1:
+    container_name: mongossource1
+    hostname: mongossource1
+    image: mongo:5.0.8
+    depends_on:
+      - mongosourcecfg1
+      - mongosourcecfg2
+    command: mongos --configdb mongosourcers1conf/mongosourcecfg1:27021,mongosourcecfg2:27021,mongosourcecfg3:27021 --port 27017 --bind_ip_all
+    ports:
+      - 27017:27017

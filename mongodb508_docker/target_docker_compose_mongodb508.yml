@@ -1,0 +1,63 @@
+version: '3'
+services:
+ # mongo config server
+  mongoctargetfg1:
+    container_name: mongoctargetfg1
+    hostname: mongoctargetfg1
+    image: mongo:5.0.8
+    command: mongod --configsvr --replSet mongotargetrs1conf --dbpath /data/db --port 27019 --bind_ip_all
+    volumes:
+      - ~/mongo_target_cluster/config1:/data/db
+
+  mongoctargetfg2:
+    container_name: mongoctargetfg2
+    hostname: mongoctargetfg2
+    image: mongo:5.0.8
+    command: mongod --configsvr --replSet mongotargetrs1conf --dbpath /data/db --port 27019 --bind_ip_all
+    volumes:
+      - ~/mongo_target_cluster/config2:/data/db
+
+  mongoctargetfg3:
+    container_name: mongoctargetfg3
+    hostname: mongoctargetfg3
+    image: mongo:5.0.8
+    command: mongod --configsvr --replSet mongotargetrs1conf --dbpath /data/db --port 27019 --bind_ip_all
+    volumes:
+      - ~/mongo_target_cluster/config3:/data/db
+
+# replica set shard 1
+  mongotargetrs1n1:
+    container_name: mongotargetrs1n1
+    hostname: mongotargetrs1n1
+    image: mongo:5.0.8
+    command: mongod --shardsvr --replSet mongotargetrs1 --dbpath /data/db --port 27018 --bind_ip_all
+    volumes:
+      - ~/mongo_target_cluster/data1:/data/db
+
+  mongotargetrs1n2:
+    container_name: mongotargetrs1n2
+    hostname: mongotargetrs1n2
+    image: mongo:5.0.8
+    command: mongod --shardsvr --replSet mongotargetrs1 --dbpath /data/db --port 27018 --bind_ip_all
+    volumes:
+      - ~/mongo_target_cluster/data2:/data/db
+
+  mongotargetrs1n3:
+    container_name: mongotargetrs1n3
+    hostname: mongotargetrs1n3
+    image: mongo:5.0.8
+    command: mongod --shardsvr --replSet mongotargetrs1 --dbpath /data/db --port 27018 --bind_ip_all
+    volumes:
+      - ~/mongo_target_cluster/data3:/data/db
+
+# mongos router
+  mongostarget1:
+    container_name: mongostarget1
+    hostname: mongostarget1
+    image: mongo:5.0.8
+    depends_on:
+      - mongoctargetfg1
+      - mongoctargetfg2
+    command: mongos --configdb mongotargetrs1conf/mongoctargetfg1:27019,mongoctargetfg2:27019,mongoctargetfg3:27019 --port 27017 --bind_ip_all
+    ports:
+      - 27020:27017
