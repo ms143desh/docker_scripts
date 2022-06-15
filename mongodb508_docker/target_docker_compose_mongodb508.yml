@@ -6,6 +6,8 @@ services:
     hostname: mongoctargetfg1
     image: mongo:5.0.8
     command: mongod --configsvr --replSet mongotargetrs1conf --dbpath /data/db --port 27019 --bind_ip_all
+    ports:
+      - 27031:27019
     volumes:
       - ~/mongo_target_cluster/config1:/data/db
 
@@ -14,6 +16,8 @@ services:
     hostname: mongoctargetfg2
     image: mongo:5.0.8
     command: mongod --configsvr --replSet mongotargetrs1conf --dbpath /data/db --port 27019 --bind_ip_all
+    ports:
+      - 27032:27019
     volumes:
       - ~/mongo_target_cluster/config2:/data/db
 
@@ -22,6 +26,8 @@ services:
     hostname: mongoctargetfg3
     image: mongo:5.0.8
     command: mongod --configsvr --replSet mongotargetrs1conf --dbpath /data/db --port 27019 --bind_ip_all
+    ports:
+      - 27033:27019
     volumes:
       - ~/mongo_target_cluster/config3:/data/db
 
@@ -31,6 +37,8 @@ services:
     hostname: mongotargetrs1n1
     image: mongo:5.0.8
     command: mongod --shardsvr --replSet mongotargetrs1 --dbpath /data/db --port 27018 --bind_ip_all
+    ports:
+      - 27034:27018
     volumes:
       - ~/mongo_target_cluster/data1:/data/db
 
@@ -39,6 +47,8 @@ services:
     hostname: mongotargetrs1n2
     image: mongo:5.0.8
     command: mongod --shardsvr --replSet mongotargetrs1 --dbpath /data/db --port 27018 --bind_ip_all
+    ports:
+      - 27035:27018
     volumes:
       - ~/mongo_target_cluster/data2:/data/db
 
@@ -47,6 +57,8 @@ services:
     hostname: mongotargetrs1n3
     image: mongo:5.0.8
     command: mongod --shardsvr --replSet mongotargetrs1 --dbpath /data/db --port 27018 --bind_ip_all
+    ports:
+      - 27036:27018
     volumes:
       - ~/mongo_target_cluster/data3:/data/db
 
@@ -58,6 +70,6 @@ services:
     depends_on:
       - mongoctargetfg1
       - mongoctargetfg2
-    command: mongos --configdb mongotargetrs1conf/mongoctargetfg1:27019,mongoctargetfg2:27019,mongoctargetfg3:27019 --port 27017 --bind_ip_all
+    command: mongos --configdb mongotargetrs1conf/mongoctargetfg1:27031,mongoctargetfg2:27032,mongoctargetfg3:27033 --port 27017 --bind_ip_all
     ports:
-      - 27020:27017
+      - 27018:27017
