@@ -1,0 +1,75 @@
+version: '3'
+services:
+ # mongo config server
+  34mongoctargetfg1:
+    container_name: 34mongoctargetfg1
+    hostname: 34mongoctargetfg1
+    image: mongo:3.4.24
+    command: mongod --configsvr --replSet 34mongotargetrs1conf --dbpath /data/db --port 27331
+    ports:
+      - 27331:27331
+    volumes:
+      - ~/mongo_target_cluster_34/config1:/data/db
+
+  34mongoctargetfg2:
+    container_name: 34mongoctargetfg2
+    hostname: 34mongoctargetfg2
+    image: mongo:3.4.24
+    command: mongod --configsvr --replSet 34mongotargetrs1conf --dbpath /data/db --port 27331
+    ports:
+      - 27332:27331
+    volumes:
+      - ~/mongo_target_cluster_34/config2:/data/db
+
+  34mongoctargetfg3:
+    container_name: 34mongoctargetfg3
+    hostname: 34mongoctargetfg3
+    image: mongo:3.4.24
+    command: mongod --configsvr --replSet 34mongotargetrs1conf --dbpath /data/db --port 27331
+    ports:
+      - 27333:27331
+    volumes:
+      - ~/mongo_target_cluster_34/config3:/data/db
+
+# replica set shard 1
+  34mongotargetrs1n1:
+    container_name: 34mongotargetrs1n1
+    hostname: 34mongotargetrs1n1
+    image: mongo:3.4.24
+    command: mongod --shardsvr --replSet 34mongotargetrs1 --dbpath /data/db --port 27334
+    ports:
+      - 27334:27334
+    volumes:
+      - ~/mongo_target_cluster_34/data1:/data/db
+
+  34mongotargetrs1n2:
+    container_name: 34mongotargetrs1n2
+    hostname: 34mongotargetrs1n2
+    image: mongo:3.4.24
+    command: mongod --shardsvr --replSet 34mongotargetrs1 --dbpath /data/db --port 27334
+    ports:
+      - 27335:27334
+    volumes:
+      - ~/mongo_target_cluster_34/data2:/data/db
+
+  34mongotargetrs1n3:
+    container_name: 34mongotargetrs1n3
+    hostname: 34mongotargetrs1n3
+    image: mongo:3.4.24
+    command: mongod --shardsvr --replSet 34mongotargetrs1 --dbpath /data/db --port 27334
+    ports:
+      - 27336:27334
+    volumes:
+      - ~/mongo_target_cluster_34/data3:/data/db
+
+# mongos router
+  34mongostarget1:
+    container_name: 34mongostarget1
+    hostname: 34mongostarget1
+    image: mongo:3.4.24
+    depends_on:
+      - 34mongoctargetfg1
+      - 34mongoctargetfg2
+    command: mongos --configdb 34mongotargetrs1conf/34mongoctargetfg1:27331,34mongoctargetfg2:27331,34mongoctargetfg3:27331 --port 27318
+    ports:
+      - 27318:27318
