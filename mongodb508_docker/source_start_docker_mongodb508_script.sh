@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Docker Compose for MongoDB ReplicaSet and Sharded cluster"
-docker-compose -f source_docker_compose_mongodb508_copy.yml up -d
+docker-compose -f source_docker_compose_mongodb508.yml up -d
 
 echo "Wait for MongoDB clusters to start"
 sleep 30
